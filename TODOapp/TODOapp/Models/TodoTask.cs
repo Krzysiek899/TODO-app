@@ -11,8 +11,7 @@ public class TodoTask {
     public DateTime? DueDate { get; set; }
 
     public ICollection<Tag> Tags { get; } = new List<Tag>();
-    public Guid UserId { get; set; }
-    public User User { get; set; } = null!;
+
 }
 
 public enum TaskImportance {
