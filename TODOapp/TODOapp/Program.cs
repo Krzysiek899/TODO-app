@@ -11,7 +11,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 
-builder.Services.AddDbContext<TaskContext>(options => options.UseSqlite("Data Source=test.db"));
+builder.Services.AddDbContext<TaskContext>(options => options.UseSqlite("Data Source=Db/app.db"));
 
 var app = builder.Build();
 
