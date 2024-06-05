@@ -26,7 +26,7 @@ public class RegisterModel : PageModel
     {
         if (ModelState.IsValid)
         {
-            var identity = new IdentityUser { UserName = Input.User, Email = Input.User };
+            var identity = new IdentityUser { UserName = Input.User};
             var result = await _userManager.CreateAsync(identity, Input.Password);
 
             if (result.Succeeded)
