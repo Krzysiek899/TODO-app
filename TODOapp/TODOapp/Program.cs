@@ -13,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
+<<<<<<< authentication
 //builder.Services.AddDbContext<TaskContext>(options => options.UseSqlite());
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -28,6 +29,9 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     })
     .AddEntityFrameworkStores<DataContext>();
 
+=======
+builder.Services.AddDbContext<TaskContext>(options => options.UseSqlite("Data Source=Db/app.db"));
+>>>>>>> main
 
 var app = builder.Build();
 
