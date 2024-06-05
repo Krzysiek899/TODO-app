@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.EntityFrameworkCore;
 using TODOapp;
 using TODOapp.Data;
 
@@ -10,7 +11,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 
-builder.Services.AddDbContext<TaskContext>();
+builder.Services.AddDbContext<TaskContext>(options => options.UseSqlite());
 
 var app = builder.Build();
 
