@@ -1,0 +1,12 @@
+<div class="task">
+    <div class="task-title">@Title</div>
+    <hl></hl>
+    <div class="task-description">@Description</div>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = "";
+    [Parameter]
+    public string Description { get; set; } = "";
+}

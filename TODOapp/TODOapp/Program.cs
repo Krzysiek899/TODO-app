@@ -25,6 +25,8 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     })
     .AddEntityFrameworkStores<DataContext>();
 
+builder.Services.AddScoped<TodoTaskService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
