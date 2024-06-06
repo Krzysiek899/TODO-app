@@ -29,7 +29,7 @@ public class LoginModel : PageModel
 
             if (result.Succeeded)
             {
-                return LocalRedirect("~/");
+                return LocalRedirect("~/dashboard");
             }
         }
 
