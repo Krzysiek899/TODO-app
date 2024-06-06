@@ -10,6 +10,8 @@ public class TodoTask {
     public TaskImportance Importance { get; set; } = TaskImportance.Medium;
     public DateTime? DueDate { get; set; }
 
+    public string UserId { get; set; }
+    public User User { get; set; } = null!;
     public ICollection<Tag> Tags { get; } = new List<Tag>();
 
 }

@@ -7,6 +7,8 @@ public class Tag {
     public Guid TagId { get; set; }
     public string Name { get; set; }
 
+    public string UserId { get; set; }
+    public User User { get; set; } = null!;
     public ICollection<TodoTask> TodoTasks { get; } = new List<TodoTask>();
 
 }

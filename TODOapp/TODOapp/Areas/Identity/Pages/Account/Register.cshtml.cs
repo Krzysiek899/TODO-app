@@ -1,15 +1,16 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using TODOapp.Models;
 
 namespace TODOapp.Areas.Identity.Pages.Account;
 
 public class RegisterModel : PageModel
 {
-    private readonly SignInManager<IdentityUser> _signInManager;
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly SignInManager<User> _signInManager;
+    private readonly UserManager<User> _userManager;
 
-    public RegisterModel(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
+    public RegisterModel(SignInManager<User> signInManager, UserManager<User> userManager)
     {
         _signInManager = signInManager;
         _userManager = userManager;
@@ -26,7 +27,7 @@ public class RegisterModel : PageModel
     {
         if (ModelState.IsValid)
         {
-            var identity = new IdentityUser { UserName = Input.User};
+            var identity = new User { UserName = Input.User};
             var result = await _userManager.CreateAsync(identity, Input.Password);
 
             if (result.Succeeded)

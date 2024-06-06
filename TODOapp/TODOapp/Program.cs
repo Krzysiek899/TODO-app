@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TODOapp;
 using TODOapp.Data;
+using TODOapp.Models;
 
 //using TODOapp.Data;
 
@@ -16,7 +17,7 @@ builder.Services.AddServerSideBlazor();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContextFactory<DataContext>(options => options.UseSqlite(connectionString));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+builder.Services.AddIdentity<User, IdentityRole>(options =>
     {
         options.Password.RequireDigit = true;
         options.Password.RequiredLength = 8;
