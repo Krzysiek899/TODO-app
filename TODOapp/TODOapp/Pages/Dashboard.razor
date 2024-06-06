@@ -1,5 +1,18 @@
 @page "/dashboard"
+@using TODOapp.Models
+@using TODOapp.Data
+@inject TodoTaskService TodoTaskService
 
 <PageTitle>User Dashboard</PageTitle>
 
-<h1>EOOOOOOOOO</h1>
+@foreach (var todoTask in todoTasks) {
+    <TodoTaskView Title="@todoTask.Title" Description="@todoTask.Description"></TodoTaskView>
+}
+
+@code {
+    public List<TodoTask> todoTasks;
+    
+    protected override async Task OnInitializedAsync() {
+        todoTasks = await TodoTaskService.GetTodoTasks();
+    }
+}
