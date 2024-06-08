@@ -6,8 +6,6 @@ using TODOapp;
 using TODOapp.Data;
 using TODOapp.Models;
 
-//using TODOapp.Data;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -26,6 +24,8 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
         options.Password.RequireNonAlphanumeric = true;
     })
     .AddEntityFrameworkStores<DataContext>();
+
+builder.Services.AddScoped<TodoTaskService>();
 
 var app = builder.Build();
 
