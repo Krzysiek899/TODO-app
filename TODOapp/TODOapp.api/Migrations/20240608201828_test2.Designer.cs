@@ -8,11 +8,11 @@ using TODOapp.Data;
 
 #nullable disable
 
-namespace TODOapp.Migrations
+namespace TODOapp.api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240606213731_init")]
-    partial class init
+    [Migration("20240608201828_test2")]
+    partial class test2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

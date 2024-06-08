@@ -2,26 +2,26 @@ using Microsoft.AspNetCore.Mvc;
 using TODOapp.Data;
 using TODOapp.Models;
 
-namespace TODOapp.Controllers;
+namespace TODOapp.api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public class TodoTasksController : ControllerBase {
-    private readonly TodoTaskService _todoService;
+    private readonly TodoTaskRepository _todoRepository;
 
-    public TodoTasksController(TodoTaskService todoTaskService) {
-        _todoService = todoTaskService;
+    public TodoTasksController(TodoTaskRepository todoTaskRepository) {
+        _todoRepository = todoTaskRepository;
     }
 
     [HttpGet]
     public async Task<ActionResult<List<TodoTask>>> Get() {
-        var todoTasks = await _todoService.GetTodoTasksAsync();
+        var todoTasks = await _todoRepository.GetTodoTasksAsync();
         return Ok(todoTasks);
     }
 
     [HttpGet("{guid}")]
     public async Task<ActionResult<TodoTask>> Get(Guid guid) {
-        var todoTask = await _todoService.GetTodoTaskAsync(guid);
+        var todoTask = await _todoRepository.GetTodoTaskAsync(guid);
         if (todoTask == null)
             return NotFound();
         return Ok(todoTask);
@@ -29,7 +29,7 @@ public class TodoTasksController : ControllerBase {
 
     [HttpPost]
     public async Task<ActionResult> Post(TodoTask todoTask) {
-        await _todoService.AddTodoTaskAsync(todoTask);
+        await _todoRepository.AddTodoTaskAsync(todoTask);
         return NoContent();
     }
 

@@ -1,7 +1,5 @@
 @page "/dashboard"
 @using TODOapp.Models
-@using TODOapp.Data
-@inject TodoTaskService TodoTaskService
 
 <PageTitle>User Dashboard</PageTitle>
 
@@ -13,6 +11,6 @@
     public List<TodoTask> todoTasks;
     
     protected override async Task OnInitializedAsync() {
-        todoTasks = await TodoTaskService.GetTodoTasks();
+        //todoTasks = await TodoTaskService.GetTodoTasks();
     }
 }

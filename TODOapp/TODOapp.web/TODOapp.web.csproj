@@ -4,6 +4,7 @@
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>TODOapp</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,7 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Db\" />
+      <ProjectReference Include="..\TODOapp.models\TODOapp.models.csproj" />
     </ItemGroup>
 
 </Project>

@@ -7,7 +7,7 @@ using TODOapp.Data;
 
 #nullable disable
 
-namespace TODOapp.Migrations
+namespace TODOapp.api.Migrations
 {
     [DbContext(typeof(DataContext))]
     partial class DataContextModelSnapshot : ModelSnapshot
