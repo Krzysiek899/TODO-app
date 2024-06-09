@@ -1,0 +1,67 @@
+@page "/newtask"
+
+<PageTitle>New task</PageTitle>
+
+<EditForm Model="@newTodoTask" OnInvalidSubmit="@Create">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="container">
+        <div class="row">
+            <div class="col-3">
+                <h2>New task:</h2>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-2">
+                <label for="title">Title: </label>
+            </div>
+            <div class="col">
+                <InputText id="title" @bind-Value="newTodoTask.Title" />
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-2">
+                <label for="description">Description: </label>
+            </div>
+            <div class="col">
+                <InputTextArea id="description" @bind-Value="newTodoTask.Description" />
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-2">
+                <label for="importance">Importance: </label>
+            </div>
+            <div class="col">
+                <InputSelect @bind-Value="newTodoTask.Importance">
+                    <option checked="@(newTodoTask.Importance == TaskImportance.VeryLow)" value="VeryLow">Very Low</option>
+                    <option checked="@(newTodoTask.Importance == TaskImportance.Low)" value="Low">Low</option>
+                    <option checked="@(newTodoTask.Importance == TaskImportance.Medium)" value="Medium">Medium</option>
+                    <option checked="@(newTodoTask.Importance == TaskImportance.High)" value="High">High</option>
+                    <option checked="@(newTodoTask.Importance == TaskImportance.VeryHigh)" value="VeryHigh">Very High</option>
+                    <option checked="@(newTodoTask.Importance == TaskImportance.Critical)" value="Critical">Critical</option>
+                </InputSelect>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-2">
+                <label for="duedate">Due date (optional): </label>
+            </div>
+            <div class="col">
+                <InputDate id="duedate" @bind-Value="newTodoTask.DueDate" />
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-1">
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private TodoTask newTodoTask { get; set; } = new TodoTask();
+
+    private void Create() {
+        throw new NotImplementedException();
+    }
+}

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TODOapp.Data;
 using TODOapp.Models;
 
@@ -7,21 +8,23 @@ namespace TODOapp.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 public class TodoTasksController : ControllerBase {
-    private readonly TodoTaskService _todoService;
+    private readonly DataContext _context;
 
-    public TodoTasksController(TodoTaskService todoTaskService) {
-        _todoService = todoTaskService;
+    private readonly TodoTaskService _todoTaskService;
+    public TodoTasksController(DataContext dataContext, TodoTaskService todoTaskService) {
+        _context = dataContext;
+        _todoTaskService = todoTaskService;
     }
 
     [HttpGet]
     public async Task<ActionResult<List<TodoTask>>> Get() {
-        var todoTasks = await _todoService.GetTodoTasksAsync();
+        var todoTasks = await _context.TodoTasks.ToListAsync();
         return Ok(todoTasks);
     }
 
     [HttpGet("{guid}")]
     public async Task<ActionResult<TodoTask>> Get(Guid guid) {
-        var todoTask = await _todoService.GetTodoTaskAsync(guid);
+        var todoTask = await _context.TodoTasks.FindAsync(guid);
         if (todoTask == null)
             return NotFound();
         return Ok(todoTask);
@@ -29,21 +32,38 @@ public class TodoTasksController : ControllerBase {
 
     [HttpPost]
     public async Task<ActionResult> Post(TodoTask todoTask) {
-        await _todoService.AddTodoTaskAsync(todoTask);
+        _context.TodoTasks.Add(todoTask);
+        await _context.SaveChangesAsync();
         return NoContent();
     }
 
     [HttpPut("{guid}")]
-    public ActionResult Put(Guid guid, TodoTask todoTask) {
+    public async Task<ActionResult> Put(Guid guid, TodoTask todoTask) {
         if (guid != todoTask.TaskId) {
             return BadRequest();
         }
+        var oldTask = await _context.TodoTasks.FindAsync(guid);
+        if (oldTask == null)
+            return NotFound();
 
+        oldTask.Title = todoTask.Title;
+        oldTask.Description = todoTask.Description;
+        oldTask.Importance = todoTask.Importance;
+        oldTask.DueDate = todoTask.DueDate;
+        oldTask.UserId = todoTask.UserId;
+        await _context.SaveChangesAsync();
         return NoContent();
     }
 
     [HttpDelete]
-    public ActionResult Delete(string guid) {
-        return Ok("delete task by guid");
+    public async Task<ActionResult> Delete(string guid) {
+        var todoTask = await _context.TodoTasks.FindAsync(guid);
+        if (todoTask == null) {
+            return NotFound();
+        }
+
+        _context.TodoTasks.Remove(todoTask);
+        await _context.SaveChangesAsync();
+        return NoContent();
     }
 }
