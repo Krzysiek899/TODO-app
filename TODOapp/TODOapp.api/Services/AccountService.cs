@@ -46,7 +46,7 @@ public class AccountService : IAccountService
         }
     }
     
-    public async Task<AuthenticationModel> GetTokenAsync(TokenRequestModel model)
+    public async Task<AuthenticationModel> LoginAsync(TokenRequestModel model)
     {
         var authenticationModel = new AuthenticationModel();
         var user = await _userManager.FindByEmailAsync(model.Email);

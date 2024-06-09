@@ -20,10 +20,10 @@ public class AccountController : ControllerBase
         return Ok(result);
     }
     
-    [HttpPost("token")]
+    [HttpPost("login")]
     public async Task<IActionResult> GetTokenAsync(TokenRequestModel model)
     {
-        var result = await _userService.GetTokenAsync(model);
+        var result = await _userService.LoginAsync(model);
         return Ok(result);
     }
 }

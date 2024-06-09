@@ -1,8 +1,10 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using TODOapp.api.Services;
 using TODOapp.api.Settings;
 using TODOapp.Data;
 using TODOapp.Models;
@@ -26,6 +28,7 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     .AddEntityFrameworkStores<DataContext>();
 
 builder.Services.AddScoped<TodoTaskService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 
 builder.Services.AddAuthentication(options =>
     {
@@ -61,6 +64,23 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+    try
+    {
+        var userManager = services.GetRequiredService<UserManager<User>>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        await ApplicationDbContextSeed.SeedEssentialsAsync(userManager, roleManager);
+    }
+    catch (Exception ex)
+    {
+        var logger = loggerFactory.CreateLogger<Program>();
+        logger.LogError(ex, "An error occurred seeding the DB.");
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -73,19 +93,6 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-
-var roleManager = app.Services.GetRequiredService<RoleManager<IdentityRole>>();
-string[] roleNames = { "Admin", "User" };
-
-foreach (var roleName in roleNames)
-{
-    var roleExist = await roleManager.RoleExistsAsync(roleName);
-    if (!roleExist)
-    {
-        await roleManager.CreateAsync(new IdentityRole(roleName));
-    }
-}
 
 app.MapControllers();
 
