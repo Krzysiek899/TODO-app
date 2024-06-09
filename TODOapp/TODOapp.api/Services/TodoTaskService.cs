@@ -4,10 +4,10 @@ using TODOapp.Models;
 
 namespace TODOapp.Data;
 
-public class TodoTaskRepository {
+public class TodoTaskService {
     private readonly DataContext _context;
 
-    public TodoTaskRepository(DataContext dataContext) {
+    public TodoTaskService(DataContext dataContext) {
         _context = dataContext;
     }
 

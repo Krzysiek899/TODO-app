@@ -9,9 +9,10 @@ public class TodoTask {
     public string? Description { get; set; }
     public TaskImportance Importance { get; set; } = TaskImportance.Medium;
     public DateTime? DueDate { get; set; }
+    public bool IsCompleted { get; set; } = false;
 
     public string UserId { get; set; }
-    public User User { get; set; } = null!;
+    public User User { get; set; }
     public ICollection<Tag> Tags { get; } = new List<Tag>();
 
 }
