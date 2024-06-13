@@ -1,4 +1,7 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TODOapp.Data;
 using TODOapp.Models;
@@ -10,42 +13,53 @@ namespace TODOapp.api.Controllers;
 [Authorize(Roles = "User, Admin")]
 public class TodoTasksController : ControllerBase {
     private readonly TodoTaskService _todoService;
-
-    public TodoTasksController(TodoTaskService todoTaskService) {
+    private readonly UserManager<User> _userManager;
+    public TodoTasksController(TodoTaskService todoTaskService, UserManager<User> userManager) {
         _todoService = todoTaskService;
+        _userManager = userManager;
     }
 
     [HttpGet]
     public async Task<ActionResult<List<TodoTask>>> Get() {
-        var todoTasks = await _todoService.GetTodoTasksAsync();
+        var userId = User.FindFirstValue("uid");
+        if (userId == null) {
+            return Unauthorized();
+        }
+
+        var todoTasks = await _todoService.GetTodoTasksAsync(userId);
         return Ok(todoTasks);
     }
 
-    [HttpGet("{guid}")]
-    public async Task<ActionResult<TodoTask>> Get(Guid guid) {
-        var todoTask = await _todoService.GetTodoTaskAsync(guid);
-        if (todoTask == null)
-            return NotFound();
-        return Ok(todoTask);
-    }
-
     [HttpPost]
-    public async Task<ActionResult> Post(TodoTask todoTask) {
-        await _todoService.AddTodoTaskAsync(todoTask);
-        return NoContent();
-    }
-
-    [HttpPut("{guid}")]
-    public ActionResult Put(Guid guid, TodoTask todoTask) {
-        if (guid != todoTask.TaskId) {
-            return BadRequest();
+    public async Task<ActionResult> Post(TodoTaskDTO newTodoTask) {
+        var userId = User.FindFirstValue("uid");
+        if (userId == null) {
+            return Unauthorized();
         }
 
-        return NoContent();
+        await _todoService.AddTodoTaskAsync(userId, newTodoTask);
+        return Ok();
     }
 
-    [HttpDelete]
-    public ActionResult Delete(string guid) {
-        return Ok("delete task by guid");
+    [HttpPut("{taskId}")]
+    public async Task<ActionResult> Put(Guid taskId, TodoTaskDTO updatedTodoTask) {
+        var userId = User.FindFirstValue("uid");
+        if (userId == null) {
+            return Ok();
+        }
+
+        await _todoService.UpdateTodoTaskAsync(userId, taskId, updatedTodoTask);
+        return Ok();
+    }
+
+    [HttpDelete("{taskId}")]
+    public async Task<ActionResult> Delete(Guid taskId) {
+        var userId = User.FindFirstValue("uid");
+        if (userId == null) {
+            return Unauthorized();
+        }
+
+        await _todoService.DeleteTodoTaskAsync(userId, taskId);
+        return Ok();
     }
 }
