@@ -1,0 +1,15 @@
+.task {
+    border-style: solid;
+    border-color: black;
+    border-radius: 20px;
+    padding: 30px;
+}
+
+.task-title {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.task-description {
+    font-size: 1em;
+}
