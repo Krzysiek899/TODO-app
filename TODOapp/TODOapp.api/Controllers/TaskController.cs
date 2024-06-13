@@ -13,10 +13,8 @@ namespace TODOapp.api.Controllers;
 [Authorize(Roles = "User, Admin")]
 public class TodoTasksController : ControllerBase {
     private readonly TodoTaskService _todoService;
-    private readonly UserManager<User> _userManager;
     public TodoTasksController(TodoTaskService todoTaskService, UserManager<User> userManager) {
         _todoService = todoTaskService;
-        _userManager = userManager;
     }
 
     [HttpGet]
