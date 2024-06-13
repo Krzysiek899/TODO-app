@@ -1,0 +1,92 @@
+@page "/login"
+@using System.ComponentModel.DataAnnotations
+@using Newtonsoft.Json
+@using TODOapp.Authentication
+@using TODOapp.Models
+@inject HttpClient HttpClient
+@inject CustomAuthenticationStateProvider StateProvider
+@inject NavigationManager Navigation
+
+<div class="h-100">
+    <div class="mask d-flex align-items-center h-100">
+        <div class="container">
+            <div class="row justify-content-center p-5">
+                <div class="col-4">
+                    <div class="card shadow-2-strong" style="background-color: #f5f7fa;">
+                        <div class="card-body">
+
+                            <EditForm Model="Input" OnValidSubmit="HandleValidSubmit">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                                <div class="form-floating" style="margin: 10px;">
+                                    <InputText id="email" @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="User Name" />
+                                    <label for="email" class="form-label">Email</label>
+                                    <ValidationMessage For="@(() => Input.Email)" />
+                                </div>
+
+                                <div class="form-floating" style="margin: 10px;">
+                                    <InputText id="password" @bind-Value="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Password" type="password" />
+                                    <label for="password" class="form-label">Password</label>
+                                    <ValidationMessage For="@(() => Input.Password)" />
+                                </div>
+
+                                <div style="margin: 10px;">
+                                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+                                </div>
+
+                                <div class="form-floating" style="margin: 10px;">
+                                    Don't have an account? <a href="/Identity/Account/Register">Sign Up</a>
+                                </div>
+                            </EditForm>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool isFormSubmitted = false;
+
+    public LoginModel Input { get; set; } = new LoginModel();
+
+    private async Task HandleValidSubmit()
+    {
+        isFormSubmitted = true;
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (isFormSubmitted)
+        {
+            HttpResponseMessage message = await HttpClient.PostAsJsonAsync("api/account/login", Input);
+
+            if (message.IsSuccessStatusCode)
+            {
+                AuthenticationModel authResponse = JsonConvert.DeserializeObject<AuthenticationModel>(await message.Content.ReadAsStringAsync());
+                string token = authResponse.Token;
+                StateProvider.MarkUserAsAuthenticated(token);
+                Navigation.NavigateTo("/Dashboard");
+            }
+            else
+            {
+                // Handle errors here
+            }
+            
+            isFormSubmitted = false;
+        }
+    }
+
+    public class LoginModel
+    {
+        [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "Invalid email address.")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Password is required.")]
+        public string Password { get; set; }
+    }
+}

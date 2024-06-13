@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-builder.Services.AddScoped<TokenStorageService>();
+builder.Services.AddScoped<ProtectedLocalStorage>();
 builder.Services.AddOptions();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<CustomAuthenticationStateProvider>();
@@ -21,7 +22,7 @@ builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.Get
 builder.Services.AddScoped<HttpClient>(sp =>
 {
     var env = sp.GetRequiredService<IWebHostEnvironment>();
-    var baseAddress = "https://localhost:5078/";
+    var baseAddress = "http://localhost:5078/";
     return new HttpClient { BaseAddress = new Uri(baseAddress) };
 });
 

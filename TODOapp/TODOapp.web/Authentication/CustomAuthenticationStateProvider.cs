@@ -1,28 +1,29 @@
 using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 namespace TODOapp.Authentication;
 
 public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 {
-    private readonly TokenStorageService _tokenStorageService;
+    private readonly ProtectedLocalStorage _storage;
     
-    public CustomAuthenticationStateProvider(TokenStorageService tokenStorageService)
+    public CustomAuthenticationStateProvider(ProtectedLocalStorage storage)
     {
-        _tokenStorageService = tokenStorageService;
+        _storage = storage;
     }
     
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var token = await _tokenStorageService.GetTokenAsync();
+        var token = await _storage.GetAsync<string>("key");
 
-        if (string.IsNullOrWhiteSpace(token))
+        if (string.IsNullOrWhiteSpace(token.Value))
         {
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
 
-        var claims = ParseClaimsFromJwt(token);
+        var claims = ParseClaimsFromJwt(token.Value);
         var identity = new ClaimsIdentity(claims, "jwt");
         var user = new ClaimsPrincipal(identity);
 
@@ -31,7 +32,7 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 
     public async void MarkUserAsAuthenticated(string token)
     {
-        await _tokenStorageService.SetTokenAsync(token);
+        await _storage.SetAsync("key", token);
         var claims = ParseClaimsFromJwt(token);
         var identity = new ClaimsIdentity(claims, "jwt");
         var user = new ClaimsPrincipal(identity);
@@ -42,7 +43,7 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 
     public async void MarkUserAsLoggedOut()
     {
-        await _tokenStorageService.RemoveTokenAsync();
+        await _storage.DeleteAsync("key");
         var authState = Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity())));
         NotifyAuthenticationStateChanged(authState);
     }
