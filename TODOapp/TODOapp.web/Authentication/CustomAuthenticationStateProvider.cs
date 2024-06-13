@@ -6,15 +6,13 @@ namespace TODOapp.Authentication;
 
 public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 {
-    private readonly HttpClient _httpClient;
     private readonly TokenStorageService _tokenStorageService;
     
-    public CustomAuthenticationStateProvider(HttpClient httpClient, TokenStorageService tokenStorageService)
+    public CustomAuthenticationStateProvider(TokenStorageService tokenStorageService)
     {
-        _httpClient = httpClient;
         _tokenStorageService = tokenStorageService;
     }
-
+    
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         var token = await _tokenStorageService.GetTokenAsync();
@@ -31,8 +29,9 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
         return new AuthenticationState(user);
     }
 
-    public void MarkUserAsAuthenticated(string token)
+    public async void MarkUserAsAuthenticated(string token)
     {
+        await _tokenStorageService.SetTokenAsync(token);
         var claims = ParseClaimsFromJwt(token);
         var identity = new ClaimsIdentity(claims, "jwt");
         var user = new ClaimsPrincipal(identity);
@@ -41,8 +40,9 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
         NotifyAuthenticationStateChanged(authState);
     }
 
-    public void MarkUserAsLoggedOut()
+    public async void MarkUserAsLoggedOut()
     {
+        await _tokenStorageService.RemoveTokenAsync();
         var authState = Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity())));
         NotifyAuthenticationStateChanged(authState);
     }

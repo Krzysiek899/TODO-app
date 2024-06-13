@@ -5,34 +5,45 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Newtonsoft.Json;
+using TODOapp.Authentication;
 using TODOapp.Models;
 
 namespace TODOapp.Areas.Identity.Pages.Account;
 
-
-private LoginModel loginModel = new LoginModel();
-
-private async Task HandleLogin()
+public class LoginPageModel : PageModel
 {
-    var response = await WebRequestMethods.Http.PostAsJsonAsync("api/auth/login", loginModel);
+    private readonly HttpClient _httpClient;
+    private readonly CustomAuthenticationStateProvider _stateProvider;
 
-    if (response.IsSuccessStatusCode)
+    public LoginPageModel(HttpClient httpClient, CustomAuthenticationStateProvider stateProvider)
     {
-        var token = await response.Content.ReadAsStringAsync();
-        await AuthenticationStateProvider.MarkUserAsAuthenticated(token);
-        Navigation.NavigateTo("/");
+        _httpClient = httpClient;
+        _stateProvider = stateProvider;
     }
-    else
+    
+    [BindProperty]
+    public LoginModel Input { get; set; }   
+    
+    public void OnGet()
     {
-        // Obsługa błędów
     }
-}
 
-public class InputModel
-{
-    [Required]
-    public string User { get; set; }
-    [Required]
-    [DataType(DataType.Password)]
-    public string Password { get; set; }
+    public async Task<IActionResult> OnPostAsync()
+    {
+        if (ModelState.IsValid)
+        {
+            HttpResponseMessage message = await _httpClient.PostAsJsonAsync("api/account/login", Input);
+
+            if (message.IsSuccessStatusCode)
+            {
+                AuthenticationModel authResponse = JsonConvert.DeserializeObject<AuthenticationModel>(message.Content.ToString());
+                string token = authResponse.Token;
+                _stateProvider.MarkUserAsAuthenticated(token);
+                return LocalRedirect("~/Dashboard");
+            } //todo: obsługa błedów
+        }
+
+        return Page();
+    }
 }

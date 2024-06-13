@@ -1,16 +1,13 @@
 @page
 @using Microsoft.AspNetCore.Identity
+@using TODOapp.Authentication
 @using TODOapp.Models
-@attribute [IgnoreAntiforgeryToken]
-@inject SignInManager<User> SignInManager
+
+@inject CustomAuthenticationStateProvider StateProvider
 @functions {
     public async Task<IActionResult> OnGet()
     {
-        if (SignInManager.IsSignedIn(User))
-        {
-            await SignInManager.SignOutAsync();
-        }
-
+        StateProvider.MarkUserAsLoggedOut();
         return Redirect("~/");
     }
 }

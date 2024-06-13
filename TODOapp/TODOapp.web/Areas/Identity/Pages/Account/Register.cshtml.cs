@@ -5,19 +5,16 @@ using TODOapp.Models;
 
 namespace TODOapp.Areas.Identity.Pages.Account;
 
-public class RegisterModel : PageModel
+public class RegisterPageModel : PageModel
 {
-    private readonly SignInManager<User> _signInManager;
-    private readonly UserManager<User> _userManager;
-
-    public RegisterModel(SignInManager<User> signInManager, UserManager<User> userManager)
+    private readonly HttpClient _httpClient;
+    public RegisterPageModel(HttpClient httpClient)
     {
-        _signInManager = signInManager;
-        _userManager = userManager;
+        _httpClient = httpClient;
     }
     
     [BindProperty]
-    public InputModel Input { get; set; }   
+    public RegisterModel Input { get; set; }   
     
     public void OnGet()
     {
@@ -27,14 +24,12 @@ public class RegisterModel : PageModel
     {
         if (ModelState.IsValid)
         {
-            var identity = new User { UserName = Input.User};
-            var result = await _userManager.CreateAsync(identity, Input.Password);
+            HttpResponseMessage message = await _httpClient.PostAsJsonAsync("api/account/register", Input);
 
-            if (result.Succeeded)
-            {
-                await _signInManager.SignInAsync(identity, isPersistent: false);
-                return LocalRedirect("~/dashboard");
-            }
+            if (message.IsSuccessStatusCode)
+            { 
+                return LocalRedirect("~/Identity/Account/Login");
+            } //todo: obsługa błedów
         }
 
         return Page();
