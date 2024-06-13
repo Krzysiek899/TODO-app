@@ -104,4 +104,17 @@ public class AccountService : IAccountService
             signingCredentials: signingCredentials);
         return jwtSecurityToken;
     }
+
+    public void SetTokensInsideCookie(AuthenticationModel auth, HttpContext context)
+    {
+        context.Response.Cookies.Append("accessToken", auth.Token,
+            new CookieOptions
+            {
+                Expires = DateTimeOffset.UtcNow.AddMinutes(60),
+                HttpOnly = true,
+                IsEssential = true,
+                Secure = true,
+                SameSite = SameSiteMode.None
+            });
+    }
     }

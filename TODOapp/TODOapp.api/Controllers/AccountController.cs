@@ -24,6 +24,7 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> GetTokenAsync(TokenRequestModel model)
     {
         var result = await _userService.LoginAsync(model);
-        return Ok(result);
+        _userService.SetTokensInsideCookie(result, HttpContext);
+        return Ok();
     }
 }
