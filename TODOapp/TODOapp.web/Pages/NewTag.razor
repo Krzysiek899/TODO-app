@@ -1,0 +1,36 @@
+@page "/newtag"
+
+<PageTitle>New tag</PageTitle>
+
+<EditForm Model="@newTag" OnInvalidSubmit="@Create">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="container">
+        <div class="row">
+            <div class="col-3">
+                <h2>New tag:</h2>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-2">
+                <label for="name">Name: </label>
+            </div>
+            <div class="col">
+                <InputText id="name" @bind-Value="newTag.Name" />
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-1">
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private Tag newTag { get; set; } = new Tag();
+
+    private void Create() {
+        throw new NotImplementedException();
+    }
+}
