@@ -1,39 +1,30 @@
 using System.ComponentModel.DataAnnotations;
+using System.Net;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using TODOapp.Models;
 
 namespace TODOapp.Areas.Identity.Pages.Account;
 
-public class LoginModel : PageModel
+
+private LoginModel loginModel = new LoginModel();
+
+private async Task HandleLogin()
 {
-    private readonly SignInManager<User> _signInManager;
+    var response = await WebRequestMethods.Http.PostAsJsonAsync("api/auth/login", loginModel);
 
-    public LoginModel(SignInManager<User> signInManager)
+    if (response.IsSuccessStatusCode)
     {
-        _signInManager = signInManager;
+        var token = await response.Content.ReadAsStringAsync();
+        await AuthenticationStateProvider.MarkUserAsAuthenticated(token);
+        Navigation.NavigateTo("/");
     }
-    [BindProperty] public InputModel Input { get; set; }
-
-    public void OnGet()
+    else
     {
-
-    }
-
-    public async Task<IActionResult> OnPostAsync()
-    {
-        if (ModelState.IsValid)
-        {
-            var result = await _signInManager.PasswordSignInAsync(Input.User, Input.Password, isPersistent: false, lockoutOnFailure: false);
-
-            if (result.Succeeded)
-            {
-                return LocalRedirect("~/dashboard");
-            }
-        }
-
-        return Page();
+        // Obsługa błędów
     }
 }
 

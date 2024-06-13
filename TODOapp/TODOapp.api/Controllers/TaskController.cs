@@ -15,6 +15,7 @@ public class TodoTasksController : ControllerBase {
     private readonly TodoTaskService _todoService;
     public TodoTasksController(TodoTaskService todoTaskService, UserManager<User> userManager) {
         _todoService = todoTaskService;
+        _userManager = userManager;
     }
 
     [HttpGet]
