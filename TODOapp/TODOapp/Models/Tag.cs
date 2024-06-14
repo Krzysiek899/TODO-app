@@ -9,5 +9,5 @@ public class Tag {
 
     public Guid UserId { get; set; }
     public User User { get; set; } = null!;
-    public ICollection<TodoTask> TodoTasks { get; } = new List<TodoTask>();
+    public ICollection<TodoTask> TodoTasks { get; set; } = new List<TodoTask>();
 }

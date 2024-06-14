@@ -25,7 +25,7 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
     })
     .AddEntityFrameworkStores<DataContext>();
 
-
+builder.Services.AddScoped<HttpContextAccessor>();
 builder.Services.AddScoped<TodoTaskService>();
 builder.Services.AddScoped<TagService>();
 

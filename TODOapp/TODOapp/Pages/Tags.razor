@@ -1,5 +1,5 @@
 @page "/tags"
-@inject TagService TagService
+@inject TagService _tagService
 
 <PageTitle>Tags</PageTitle>
 
@@ -10,7 +10,7 @@
                 <h4>#@tag.Name</h4>
             </div>
             <div class="col-1">
-                <button type="button" class="btn btn-danger">
+                <button type="button" class="btn btn-danger" @onclick="@(() => Delete(tag.TagId))">
                     <span class="oi oi-trash" aria-hidden="true"></span>
                 </button>
             </div>
@@ -22,6 +22,11 @@
     public List<Tag> tags = new List<Tag>();
     
     protected override async Task OnInitializedAsync() {
-        tags = await TagService.GetTagsAsync();
+        tags = await _tagService.GetTagsAsync();
+    }
+
+    private async Task Delete(Guid tagId) {
+        await _tagService.DeleteTagAsync(tagId);
+        tags = await _tagService.GetTagsAsync();
     }
 }

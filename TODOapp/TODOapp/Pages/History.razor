@@ -1,13 +1,13 @@
-@page "/dashboard"
+@page "/history"
 @inject TodoTaskService _todoTaskService
 
-<PageTitle>User Dashboard</PageTitle>
+<PageTitle>History</PageTitle>
 
 <div class="container">
     @foreach (var todoTask in todoTasks) {
         <div class="row justify-content-start mt-3">
             <div class="col-1">
-                <button type="button" class="btn btn-success mt-4" @onclick="@(() => Complete(todoTask.TaskId))">
+                <button type="button" class="btn btn-primary mt-4" @onclick="@(() => Restore(todoTask.TaskId))">
                     <span class="oi oi-check" aria-hidden="true"></span>
                 </button>
             </div>
@@ -45,11 +45,6 @@
                 </p>
             </div>
             <div class="col-1">
-                <a href="@( "/EditTask/" + todoTask.TaskId.ToString() )" class="btn btn-primary mt-4">
-                    <span class="oi oi-trash" aria-hidden="true"></span>
-                </a>
-            </div>
-            <div class="col-1">
                 <button type="button" class="btn btn-danger mt-4" @onclick="@(() => Delete(todoTask.TaskId))">
                     <span class="oi oi-trash" aria-hidden="true"></span>
                 </button>
@@ -69,12 +64,12 @@
         await UpdateView();
     }
 
-    private async Task Complete(Guid taskId) {
-        await _todoTaskService.CompleteTaskAsync(taskId);
+    private async Task Restore(Guid taskId) {
+        await _todoTaskService.RestoreTaskAsync(taskId);
         await UpdateView();
     }
 
     private async Task UpdateView() {
-        todoTasks = await _todoTaskService.GetPendingTodoTasksAsync();
+        todoTasks = await _todoTaskService.GetCompletedTodoTasksAsync();
     }
 }

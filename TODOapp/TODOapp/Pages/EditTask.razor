@@ -1,8 +1,9 @@
-@page "/newtask"
+@page "/EditTask/{taskId}"
 @inject TodoTaskService _todoTaskService
 @inject TagService _tagService
+@inject NavigationManager _navigationManager
 
-<PageTitle>New task</PageTitle>
+<PageTitle>Edit Task</PageTitle>
 
 <EditForm Model="@formModel" OnSubmit="@Create">
     <DataAnnotationsValidator />
@@ -74,6 +75,9 @@
 </EditForm>
 
 @code {
+    [Parameter]
+    public required string taskId { get; set; }
+
     class CheckedTag {
         public Tag tag { get; set; } = new Tag();
         public bool isChecked = false;
@@ -89,7 +93,28 @@
     public List<Tag> tags = new List<Tag>();
     
     protected override async Task OnInitializedAsync() {
-        await UpdateView();
+        formModel = new FormModel();
+        var oldTask = await _todoTaskService.GetTaskAsync(Guid.Parse(taskId));
+
+        tags = await _tagService.GetTagsAsync();
+        foreach (var tag in tags) {
+            if (oldTask.Tags.Contains(tag)) {
+                formModel.checkedTags.Add(new CheckedTag {
+                    tag = tag,
+                    isChecked = true
+                });
+            } else {
+                formModel.checkedTags.Add(new CheckedTag {
+                    tag = tag,
+                    isChecked = false
+                });
+            }
+        }
+
+        formModel.newTodoTask.Title = oldTask.Title;
+        formModel.newTodoTask.Description = oldTask.Description;
+        formModel.newTodoTask.Importance = oldTask.Importance;
+        formModel.newTodoTask.DueDate = oldTask.DueDate;
     }
 
     private async Task Create() {
@@ -105,19 +130,9 @@
                 newTodoTask.Tags.Add(checkedTag.tag);
             }
         }
-        await _todoTaskService.AddTodoTaskAsync(newTodoTask);
 
-        await UpdateView();
-    }
+        await _todoTaskService.UpdateTodoTaskAsync(Guid.Parse(taskId), newTodoTask);
 
-    private async Task UpdateView() {
-        formModel = new FormModel();
-        tags = await _tagService.GetTagsAsync();
-        foreach (var tag in tags) {
-            formModel.checkedTags.Add(new CheckedTag {
-                tag = tag,
-                isChecked = false
-            });
-        }
+        _navigationManager.NavigateTo("/dashboard");
     }
 }

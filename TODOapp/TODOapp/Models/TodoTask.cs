@@ -13,7 +13,7 @@ public class TodoTask {
 
     public Guid UserId { get; set; }
     public User User { get; set; } = null!;
-    public ICollection<Tag> Tags { get; } = new List<Tag>();
+    public ICollection<Tag> Tags { get; set; } = new List<Tag>();
 }
 
 public enum TaskImportance {

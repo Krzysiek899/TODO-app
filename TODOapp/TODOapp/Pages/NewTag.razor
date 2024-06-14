@@ -1,8 +1,9 @@
 @page "/newtag"
+@inject TagService _tagService
 
 <PageTitle>New tag</PageTitle>
 
-<EditForm Model="@newTag" OnInvalidSubmit="@Create">
+<EditForm Model="@newTag" OnSubmit="@Create">
     <DataAnnotationsValidator />
     <ValidationSummary />
     <div class="container">
@@ -28,9 +29,10 @@
 </EditForm>
 
 @code {
-    private Tag newTag { get; set; } = new Tag();
+    private TagDTO newTag { get; set; } = new TagDTO();
 
-    private void Create() {
-        throw new NotImplementedException();
+    private async Task Create() {
+        await _tagService.AddTagAsync(newTag);
+        newTag = new TagDTO();
     }
 }
