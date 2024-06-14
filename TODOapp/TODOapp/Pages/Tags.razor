@@ -25,11 +25,15 @@
     public List<Tag> tags = new List<Tag>();
     
     protected override async Task OnInitializedAsync() {
-        tags = await _tagService.GetTagsAsync();
+        await UpdateView();
     }
 
     private async Task Delete(Guid tagId) {
         await _tagService.DeleteTagAsync(tagId);
+        await UpdateView();
+    }
+
+    private async Task UpdateView() {
         tags = await _tagService.GetTagsAsync();
     }
 }
