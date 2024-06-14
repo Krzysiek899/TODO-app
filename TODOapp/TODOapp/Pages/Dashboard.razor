@@ -2,6 +2,17 @@
 @inject TodoTaskService _todoTaskService
 
 <PageTitle>User Dashboard</PageTitle>
+
+<!-- Sorting Controls -->
+<div class="mb-3">
+    <label for="sortCriteria" class="form-label">Sort by:</label>
+    <select id="sortCriteria" class="form-select" @onchange="OnSortCriteriaChanged">
+        <option value="title">Title</option>
+        <option value="importance">Importance</option>
+        <option value="dueDate">Due Date</option>
+    </select>
+</div>
+
 @if (todoTasks.Count() == 0) {
     <h2>All done!</h2>
 } else {
@@ -63,6 +74,8 @@
 
 @code {
     public List<TodoTask> todoTasks = new List<TodoTask>();
+    private string sortCriteria = "title";
+
     protected override async Task OnInitializedAsync() {
         await UpdateView();
     }
@@ -79,5 +92,27 @@
 
     private async Task UpdateView() {
         todoTasks = await _todoTaskService.GetPendingTodoTasksAsync();
+        SortTasks();
+    }
+
+    private void SortTasks() {
+        switch (sortCriteria) {
+            case "title":
+                todoTasks = todoTasks.OrderBy(t => t.Title).ToList();
+                break;
+            case "importance":
+                todoTasks = todoTasks.OrderBy(t => t.Importance).ToList();
+                break;
+            case "dueDate":
+                todoTasks = todoTasks.OrderBy(t => t.DueDate).ToList();
+                break;
+        }
+    }
+
+    private async Task OnSortCriteriaChanged(ChangeEventArgs e) {
+        sortCriteria = e.Value.ToString();
+        SortTasks();
+        StateHasChanged();
     }
 }
+
