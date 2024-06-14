@@ -5,22 +5,32 @@
 <PageTitle>Users</PageTitle>
 
 <div class="container">
-    @foreach (var user in users) {
-        <div class="task row justify-content-start mt-3">
-            <div class="col-2 bg-info">
-                <h4>@user.UserName</h4>
-            </div>
-            <div class="col-1">
-                <button type="button" class="btn btn-danger" @onclick="@(() => Delete(user.Id))">
-                    <span class="oi oi-trash" aria-hidden="true"></span>
-                </button>
+    @foreach (var user in users)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <h4>@user.UserName</h4>
+                        <h5>@user.Role</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-danger mt-2" @onclick="@(() => Delete(user.UserId))">
+                            <span class="oi oi-trash" aria-hidden="true"></span> Delete
+                        </button>
+                        <button type="button" class="btn btn-info mt-2" @onclick="@(() => PromoteUser(user.UserId))">
+                            <span class="oi oi-shield" aria-hidden="true"></span> Promote to Admin
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     }
 </div>
 
+
 @code {
-    private List<User> users = new List<User>();
+    private List<UserWithRole> users = new List<UserWithRole>();
 
     protected override async Task OnInitializedAsync() {
         await UpdateView();
@@ -33,5 +43,10 @@
 
     private async Task UpdateView() {
         users = await _userService.GetUsersAsync();
+    }
+
+    private async Task PromoteUser(Guid userId) {
+        await _userService.SetUserAsAdminAsync(userId);
+        await UpdateView();
     }
 }
