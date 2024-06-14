@@ -24,7 +24,7 @@ public class TodoTaskService {
         if (user == null) {
             throw new Exception("User does not exist");
         }
-        return await _context.TodoTasks.Where(x => x.UserId == user.Id && !x.IsCompleted).ToListAsync();
+        return await _context.TodoTasks.Where(x => x.UserId == user.Id && !x.IsCompleted).Include(x => x.Tags).ToListAsync();
     }
 
     public async Task<List<TodoTask>> GetCompletedTodoTasksAsync() {
@@ -35,7 +35,7 @@ public class TodoTaskService {
         if (user == null) {
             throw new Exception("User does not exist");
         }
-        return await _context.TodoTasks.Where(x => x.UserId == user.Id && x.IsCompleted).ToListAsync();
+        return await _context.TodoTasks.Where(x => x.UserId == user.Id && x.IsCompleted).Include(x => x.Tags).ToListAsync();
     }
 
     public async Task<TodoTask?> GetTaskAsync(Guid taskId) {
