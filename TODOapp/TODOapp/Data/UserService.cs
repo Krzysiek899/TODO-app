@@ -36,7 +36,7 @@ public class UserService {
             userWithRoles.Add(new UserWithRole {
                 UserName = user.UserName,
                 UserId = user.Id,
-                Role = roles.FirstOrDefault() ?? "No Role"
+                Role = roles.FirstOrDefault() ?? "User"
             });
         }
 
@@ -58,8 +58,24 @@ public class UserService {
         if (user == null) {
             throw new Exception("User does not exist.");
         }
+        if (!await _userManager.IsInRoleAsync(user, "ADMIN")) {
+            await _userManager.RemoveFromRoleAsync(user, "USER");
+            await _userManager.AddToRoleAsync(user, "ADMIN");
+        }
+    }
 
-        await _userManager.AddToRoleAsync(user, "ADMIN");
+    public async Task SetAdminAsUserAsync(Guid userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user == null) {
+            throw new Exception("User does not exist.");
+        }
+
+        if (!await _userManager.IsInRoleAsync(user, "USER")) {
+            await _userManager.RemoveFromRoleAsync(user, "ADMIN");
+            await _userManager.AddToRoleAsync(user, "USER");
+        }
+        
     }
 }
 

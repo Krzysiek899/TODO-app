@@ -9,17 +9,27 @@
     {
         <div class="card mb-3">
             <div class="card-body">
-                <div class="row align-items-center">
-                    <div class="col-md-4">
+                <div class="row">
+                    <div class="col">
                         <h4>@user.UserName</h4>
-                        <h5>@user.Role</h5>
+                        <h5 class="text-secondary">@user.Role</h5>
                     </div>
-                    <div class="col-md-4">
-                        <button type="button" class="btn btn-danger mt-2" @onclick="@(() => Delete(user.UserId))">
+                    @if (user.Role == "Admin") {
+                        <div class="col-2">
+                            <button type="button" class="btn btn-info mt-2" @onclick="@(() => DemoteUser(user.UserId))">
+                                <span class="oi oi-shield" aria-hidden="true"></span> Demote to User
+                            </button>
+                        </div>
+                    } else {
+                        <div class="col-2">
+                            <button type="button" class="btn btn-info mt-2" @onclick="@(() => PromoteUser(user.UserId))">
+                                <span class="oi oi-shield" aria-hidden="true"></span> Promote to Admin
+                            </button>
+                        </div>
+                    }
+                    <div class="col-2">
+                        <button type="button" class="btn btn-danger mt-2 ms-5" @onclick="@(() => Delete(user.UserId))">
                             <span class="oi oi-trash" aria-hidden="true"></span> Delete
-                        </button>
-                        <button type="button" class="btn btn-info mt-2" @onclick="@(() => PromoteUser(user.UserId))">
-                            <span class="oi oi-shield" aria-hidden="true"></span> Promote to Admin
                         </button>
                     </div>
                 </div>
@@ -47,6 +57,11 @@
 
     private async Task PromoteUser(Guid userId) {
         await _userService.SetUserAsAdminAsync(userId);
+        await UpdateView();
+    }
+
+    private async Task DemoteUser(Guid userId) {
+        await _userService.SetAdminAsUserAsync(userId);
         await UpdateView();
     }
 }
