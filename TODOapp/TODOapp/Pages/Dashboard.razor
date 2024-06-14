@@ -2,61 +2,64 @@
 @inject TodoTaskService _todoTaskService
 
 <PageTitle>User Dashboard</PageTitle>
-
-<div class="container">
-    @foreach (var todoTask in todoTasks) {
-        <div class="row justify-content-start mt-3">
-            <div class="col-1">
-                <button type="button" class="btn btn-success mt-4" @onclick="@(() => Complete(todoTask.TaskId))">
-                    <span class="oi oi-check" aria-hidden="true"></span>
-                </button>
-            </div>
-            <div class="col">
-                <h4>@todoTask.Title</h4>
-                <p>
-                    <span class="pe-1 text-secondary">Importance: </span>
-                    @switch (todoTask.Importance) {
-                        case TaskImportance.Critical:
-                        case TaskImportance.VeryHigh:
-                            <span class="text-danger">@todoTask.Importance</span>
-                            break;
-                        case TaskImportance.High:
-                        case TaskImportance.Medium:
-                            <span class="text-warning">@todoTask.Importance</span>
-                            break;
-                        default:
-                            <span class="text-secondary">@todoTask.Importance</span>
-                            break;
-                    }
-                    <br/>
-
-                    @if (todoTask.DueDate != null) {
-                        <span class="pe-1 text-secondary">Due:</span>
-                        <span class="text-primary">@todoTask.DueDate</span>
+@if (todoTasks.Count() == 0) {
+    <h2>All done!</h2>
+} else {
+    <div class="container">
+        @foreach (var todoTask in todoTasks) {
+            <div class="row justify-content-start mt-3">
+                <div class="col-1">
+                    <button type="button" class="btn btn-success mt-4" @onclick="@(() => Complete(todoTask.TaskId))">
+                        <span class="oi oi-check" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="col">
+                    <h4>@todoTask.Title</h4>
+                    <p>
+                        <span class="pe-1 text-secondary">Importance: </span>
+                        @switch (todoTask.Importance) {
+                            case TaskImportance.Critical:
+                            case TaskImportance.VeryHigh:
+                                <span class="text-danger">@todoTask.Importance</span>
+                                break;
+                            case TaskImportance.High:
+                            case TaskImportance.Medium:
+                                <span class="text-warning">@todoTask.Importance</span>
+                                break;
+                            default:
+                                <span class="text-secondary">@todoTask.Importance</span>
+                                break;
+                        }
                         <br/>
-                    }
 
-                    <span class="text-secondary">@todoTask.Description</span>
-                </p>
-                <p>
-                   @foreach (var tag in todoTask.Tags) {
-                        <span class="bg-light px-1 ms-1 rounded-3">#@tag.Name</span>
-                   } 
-                </p>
+                        @if (todoTask.DueDate != null) {
+                            <span class="pe-1 text-secondary">Due:</span>
+                            <span class="text-primary">@todoTask.DueDate</span>
+                            <br/>
+                        }
+
+                        <span class="text-secondary">@todoTask.Description</span>
+                    </p>
+                    <p>
+                    @foreach (var tag in todoTask.Tags) {
+                            <span class="bg-light px-1 ms-1 rounded-3">#@tag.Name</span>
+                    } 
+                    </p>
+                </div>
+                <div class="col-1">
+                    <a href="@( "/EditTask/" + todoTask.TaskId.ToString() )" class="btn btn-primary mt-4">
+                        <span class="oi oi-pencil" aria-hidden="true"></span>
+                    </a>
+                </div>
+                <div class="col-1">
+                    <button type="button" class="btn btn-danger mt-4" @onclick="@(() => Delete(todoTask.TaskId))">
+                        <span class="oi oi-trash" aria-hidden="true"></span>
+                    </button>
+                </div>
             </div>
-            <div class="col-1">
-                <a href="@( "/EditTask/" + todoTask.TaskId.ToString() )" class="btn btn-primary mt-4">
-                    <span class="oi oi-trash" aria-hidden="true"></span>
-                </a>
-            </div>
-            <div class="col-1">
-                <button type="button" class="btn btn-danger mt-4" @onclick="@(() => Delete(todoTask.TaskId))">
-                    <span class="oi oi-trash" aria-hidden="true"></span>
-                </button>
-            </div>
-        </div>
-    }
-</div>
+        }
+    </div>
+}
 
 @code {
     public List<TodoTask> todoTasks = new List<TodoTask>();

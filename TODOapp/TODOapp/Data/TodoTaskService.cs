@@ -17,6 +17,9 @@ public class TodoTaskService {
     }
 
     public async Task<List<TodoTask>> GetPendingTodoTasksAsync() {
+        if (_httpContextAccessor.HttpContext == null) {
+            throw new Exception("Unauthorized");
+        }
         var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
         if (user == null) {
             throw new Exception("User does not exist");
@@ -25,6 +28,9 @@ public class TodoTaskService {
     }
 
     public async Task<List<TodoTask>> GetCompletedTodoTasksAsync() {
+        if (_httpContextAccessor.HttpContext == null) {
+            throw new Exception("Unauthorized");
+        }
         var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
         if (user == null) {
             throw new Exception("User does not exist");
@@ -32,11 +38,17 @@ public class TodoTaskService {
         return await _context.TodoTasks.Where(x => x.UserId == user.Id && x.IsCompleted).ToListAsync();
     }
 
-    public async Task<TodoTask> GetTaskAsync(Guid taskId) {
+    public async Task<TodoTask?> GetTaskAsync(Guid taskId) {
+        if (_httpContextAccessor.HttpContext == null) {
+            throw new Exception("Unauthorized");
+        }
         return await _context.TodoTasks.FindAsync(taskId);
     }
 
     public async Task AddTodoTaskAsync(TodoTaskDTO newTodoTask) {
+        if (_httpContextAccessor.HttpContext == null) {
+            throw new Exception("Unauthorized");
+        }
         var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
         if (user == null) {
             throw new Exception("User does not exist");
@@ -74,6 +86,9 @@ public class TodoTaskService {
     }
 
     public async Task UpdateTodoTaskAsync(Guid taskId, TodoTaskDTO updatedTodoTask) {
+        if (_httpContextAccessor.HttpContext == null) {
+            throw new Exception("Unauthorized");
+        }
         var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
         if (user == null) {
             throw new Exception("User does not exist");

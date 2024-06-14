@@ -16,6 +16,9 @@ public class TagService {
     }
 
     public async Task<List<Tag>> GetTagsAsync() {
+        if (_httpContextAccessor.HttpContext == null) {
+            throw new Exception("Unauthorized");
+        }
         var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
         if (user == null) {
             throw new Exception("User does not exist");
@@ -24,6 +27,9 @@ public class TagService {
     }
 
     public async Task AddTagAsync(TagDTO newTag) {
+        if (_httpContextAccessor.HttpContext == null) {
+            throw new Exception("Unauthorized");
+        }
         var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
         if (user == null) {
             throw new Exception("User does not exist");
@@ -48,5 +54,5 @@ public class TagService {
 }
 
 public class TagDTO {
-    public string Name { get; set; }
+    public string Name { get; set; } = "";
 }

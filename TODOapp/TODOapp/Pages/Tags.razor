@@ -3,21 +3,24 @@
 
 <PageTitle>Tags</PageTitle>
 
-<div class="container">
-    @foreach (var tag in tags) {
-        <div class="task row justify-content-start mt-3">
-            <div class="col-2 bg-light">
-                <h4>#@tag.Name</h4>
+@if (tags.Count() == 0) {
+    <h2>Nothing to see here!</h2>
+} else {
+    <div class="container">
+        @foreach (var tag in tags) {
+            <div class="task row justify-content-start mt-3">
+                <div class="col-2 bg-light">
+                    <h4>#@tag.Name</h4>
+                </div>
+                <div class="col-1">
+                    <button type="button" class="btn btn-danger" @onclick="@(() => Delete(tag.TagId))">
+                        <span class="oi oi-trash" aria-hidden="true"></span>
+                    </button>
+                </div>
             </div>
-            <div class="col-1">
-                <button type="button" class="btn btn-danger" @onclick="@(() => Delete(tag.TagId))">
-                    <span class="oi oi-trash" aria-hidden="true"></span>
-                </button>
-            </div>
-        </div>
-    }
-</div>
-
+        }
+    </div>
+}
 @code {
     public List<Tag> tags = new List<Tag>();
     
